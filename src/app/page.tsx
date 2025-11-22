@@ -3,7 +3,9 @@
 import { FormEvent, useState } from "react";
 
 interface UploadResult {
+  id: string;
   url: string;
+  imageUrl: string;
   size: number;
   originalSize: number;
 }
@@ -75,8 +77,8 @@ export default function Home() {
             Kompres &amp; Hosting Gambar Cepat
           </h1>
           <p className="text-sm text-zinc-600">
-            Unggah gambar, biarkan Tinify mengompres hingga &lt; 600KB, lalu dapatkan tautan
-            langsung yang siap dibagikan ke platform apa pun.
+            Unggah gambar, biarkan Tinify mengompres otomatis, lalu dapatkan tautan halaman
+            dengan metadata lengkap untuk pratinjau di platform mana pun.
           </p>
         </header>
 
@@ -99,7 +101,7 @@ export default function Home() {
               className="w-full rounded-lg border border-zinc-200 px-4 py-3 text-sm file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:bg-zinc-900 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:border-zinc-300"
             />
             <p className="text-xs text-zinc-500">
-              Ukuran akhir ideal: 300-500KB. Sistem akan menolak hasil &gt; 600KB.
+              Sistem otomatis mengompres menggunakan Tinify tanpa batasan ukuran khusus.
             </p>
           </div>
 
@@ -123,8 +125,12 @@ export default function Home() {
             <h2 className="text-lg font-semibold">Gambar Siap Dibagikan</h2>
             <div className="grid gap-2 text-sm text-zinc-600 sm:grid-cols-2">
               <div>
-                <p className="font-medium text-zinc-700">Tautan langsung</p>
+                <p className="font-medium text-zinc-700">Tautan halaman pratinjau</p>
                 <p className="break-all text-zinc-900">{result.url}</p>
+              </div>
+              <div>
+                <p className="font-medium text-zinc-700">Tautan gambar langsung</p>
+                <p className="break-all text-zinc-900">{result.imageUrl}</p>
               </div>
               <div className="text-sm text-zinc-600">
                 <p>Ukuran asli: {formatBytes(result.originalSize)}</p>
@@ -145,7 +151,7 @@ export default function Home() {
 
             <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={result.url} alt="Pratinjau hasil kompresi" className="h-auto w-full" />
+              <img src={result.imageUrl} alt="Pratinjau hasil kompresi" className="h-auto w-full" />
             </div>
           </section>
         )}
