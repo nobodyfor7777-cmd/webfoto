@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { randomUUID } from "crypto";
 import tinify from "tinify";
+import { getBlobUrl } from "@/lib/blob";
 
 const ALLOWED_TYPES = new Set([
   "image/jpeg",
@@ -64,19 +65,21 @@ export async function POST(request: Request) {
       : "gambar";
     const objectKey = `uploads/${new Date().toISOString().slice(0, 10)}/${baseName}-${randomUUID()}.${extension}`;
 
+    // Upload ke Vercel Blob
     const blob = await put(objectKey, compressed, {
       access: "public",
       contentType,
-      cacheControlMaxAge: 60 * 60 * 24 * 365,
+      cacheControlMaxAge: 60 * 60 * 24 * 365, // Cache 1 tahun
     });
 
     // Generate URL untuk halaman tampilan gambar
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const viewUrl = `${baseUrl}/p/${objectKey.split('/').pop()}`;
+    const imageId = objectKey.split('/').pop();
+    const viewUrl = `${baseUrl}/p/${imageId}`;
 
     return NextResponse.json({
-      url: viewUrl,  // Gunakan URL halaman tampilan, bukan URL blob langsung
-      blobUrl: blob.url,  // Sertakan juga URL blob untuk referensi
+      url: viewUrl,  // URL halaman tampilan
+      blobUrl: getBlobUrl(objectKey),  // URL langsung ke gambar
       size: compressed.length,
       originalSize: originalBuffer.length,
     });
